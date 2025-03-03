@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const UserLogin = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [userData, setUserData] = useState({});
+    
+    const submitHandler = (e) => {
+        e.preventDefault();
+        setUserData({
+            email: email,
+            password: password
+        })
+        // console.log(userData);
+        setEmail('');
+        setPassword('');
+    }
     return (
         <div className="flex justify-center items-center min-h-screen bg-[url(https://plus.unsplash.com/premium_photo-1682834983265-27a10ba5232c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dHJhZmZpYyUyMGxpZ2h0fGVufDB8fDB8fHww)]">
             {/* Login Card */}
@@ -12,7 +26,7 @@ const UserLogin = () => {
                 </div>
 
                 {/* Login Form */}
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={(e) => submitHandler(e)}>
                     
                     {/* Email Input */}
                     <div>
@@ -22,6 +36,8 @@ const UserLogin = () => {
                         <input 
                             required 
                             type="email" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             placeholder="example@gmail.com" 
                             className="w-full px-4 py-3 mt-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-lg shadow-sm 
                             focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-400 transition-all duration-300"
@@ -36,6 +52,8 @@ const UserLogin = () => {
                         <input 
                             required 
                             type="password" 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             placeholder="Enter Password" 
                             className="w-full px-4 py-3 mt-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-lg shadow-sm 
                             focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-400 transition-all duration-300"
@@ -50,20 +68,21 @@ const UserLogin = () => {
                         Login
                     </button>
 
-                    {/* Sign-Up Link */}
-                    <p className="mt-4 text-center text-gray-600 text-sm">
+                </form>
+
+                {/* Sign-Up Link */}
+                <p className="mt-3 text-center text-gray-600 text-sm">
                         New here? 
                         <a href="/signup" className="text-blue-600 hover:underline ml-1">
                             Create Your Account
                         </a>
-                    </p>
-                </form>
+                </p>
 
                 {/* Sign In as Captain Button */}
                 <button 
                     type="button"
                     onClick={() => window.location.href='/captainLogin'}
-                    className="w-full mt-4 bg-green-500 text-white py-3 rounded-lg 
+                    className="w-full mt-10 bg-green-500 text-white py-3 rounded-lg 
                     hover:bg-green-600 transition-all duration-300 transform hover:scale-105 shadow-md font-bold">
                     Login as Captain
                 </button>
