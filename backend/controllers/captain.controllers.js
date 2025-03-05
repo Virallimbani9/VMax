@@ -3,34 +3,44 @@ const CaptainService = require('../services/captain.services');
 const {validationResult} = require('express-validator');
 const BlacklistToken = require('../models/blacklistToken.models');
 
-const register = async(req,res) =>{
+const register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    }
-    
-    const {fullName, email, password, vehicle} = req.body;
-
-    const existingCatain = await Captain.findOne({email });
-    if(existingCatain){
-        return res.status(400).json({message: 'Captain already exists'});
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const hashPassword =  await Captain.hashPassword(password);
+    const { fullName, email, password, vehicle } = req.body;
+    // console.log(req.body);
 
-    const catain = await CaptainService.createCaptain({
+    // Check if the captain already exists
+    const existingCaptain = await Captain.findOne({ email });
+    if (existingCaptain) {
+      return res.status(400).json({ message: "Captain already exists" });
+    }
+
+    // Hash password
+    const hashedPassword = await Captain.hashPassword(password);
+
+    // Create captain with correct nested structure
+    const captain = await Captain.create({
+      fullName: {
         firstName: fullName.firstName,
-        lastName: fullName.lastName,
-        email,
-        password: hashPassword,
-        color:vehicle.color,
+        lastName: fullName.lastName
+      },
+      email,
+      password: hashedPassword,
+      vehicle: {
+        color: vehicle.color,
         plate: vehicle.plate,
         capacity: vehicle.capacity,
-        vehicleType: vehicle.vehicleType,
+        vehicleType: vehicle.vehicleType
+      }
     });
-    const token = catain.generateToken();
-    res.status(201).json({catain, token});
-} 
+
+    // Generate token
+    const token = captain.generateToken();
+    res.status(201).json({ captain, token });
+};
 
 const login = async(req,res) =>{
     const errors = validationResult(req);

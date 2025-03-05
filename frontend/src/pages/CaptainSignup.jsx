@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { UserDataContext } from "../context/UserContext";
-
+import { CaptainDataContext } from "../context/CaptainContext";
 
 const CaptainSignup = () => {
   const [formData, setFormData] = useState({
@@ -12,8 +11,7 @@ const CaptainSignup = () => {
     vehicle: { color: "", plate: "", capacity: "", vehicleType: "" },
   });
   const navigate = useNavigate();
-  const { user, setUser } = React.useContext(UserDataContext);
-
+  const { captain, setCaptain } = React.useContext(CaptainDataContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,7 +29,10 @@ const CaptainSignup = () => {
     e.preventDefault();
 
     const formattedData = {
-      fullName: `${formData.fullName.firstName} ${formData.fullName.lastName}`,
+      fullName: {
+        firstName: formData.fullName.firstName,
+        lastName: formData.fullName.lastName,
+      },
       email: formData.email,
       password: formData.password,
       vehicle: {
@@ -42,146 +43,131 @@ const CaptainSignup = () => {
       },
     };
 
-    try{
+    try {
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/register`, formattedData);
-      setUser(response.data.catain);
+      setCaptain(response.data.captain);
+      localStorage.setItem("token", response.data.token);
       navigate("/home");
     } catch (error) {
       console.error("Server Error:", error.response.data);
-      alert(
-        error.response.data.message ||
-          "Error signing up! Please check your input."
-      );
+      alert(error.response.data.message || "Error signing up! Please check your input.");
     }
-  
-      console.log("Captain Data:", formData);
-      setFormData({
-        fullName: { firstName: "", lastName: "" },
-        email: "",
-        password: "",
-        vehicle: { color: "", plate: "", capacity: "", vehicleType: "" },
-      });
-    }
-  
+
+    setFormData({
+      fullName: { firstName: "", lastName: "" },
+      email: "",
+      password: "",
+      vehicle: { color: "", plate: "", capacity: "", vehicleType: "" },
+    });
+  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[url(https://plus.unsplash.com/premium_photo-1682048358624-8471ced24a65?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJhZmZpYyUyMGxpZ2h0fGVufDB8fDB8fHww)] px-4">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-85 border border-gray-200">
-        {/* VMax Logo */}
-        <div className="flex justify-center mb-6">
-          <img src="/vmax.png" alt="VMax Logo" className="h-20 drop-shadow-lg" />
+    <div className="flex justify-center items-center min-h-screen px-4 bg-[url(https://plus.unsplash.com/premium_photo-1682048358624-8471ced24a65?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJhZmZpYyUyMGxpZ2h0fGVufDB8fDB8fHww)]">
+      <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md border border-gray-200">
+        {/* Uber Logo */}
+        <div className="flex justify-start mb-4">
+        <img src="/vmax.png" alt="VMax Logo" className="h-20 drop-shadow-lg" />
         </div>
 
-        {/* Form */} 
+        {/* Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* First Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">First Name</label>
+          {/* First & Last Name */}
+          <div className="flex space-x-2">
             <input
               type="text"
               name="firstName"
-              placeholder="Enter first name"
+              placeholder="First Name"
               value={formData.fullName.firstName}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
+              className="w-1/2 bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
             />
-          </div>
-
-          {/* Last Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Last Name</label>
             <input
               type="text"
               name="lastName"
-              placeholder="Enter last name"
+              placeholder="Last Name"
               value={formData.fullName.lastName}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
+              className="w-1/2 bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
             />
-          
           </div>
 
           {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
-            />
-           
-          </div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
+          />
 
           {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
-            />
-           
-          </div>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter Password"
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
+          />
 
-          {/* Vehicle Details */}
-          <div>
-            <h3 className="text-lg font-semibold mt-4 mb-1">Vehicle Information</h3>
-
-            <label className="block text-sm font-medium text-gray-700">Vehicle Color</label>
+          {/* Vehicle Information */}
+          <h3 className="text-lg font-semibold mt-2">Vehicle Information</h3>
+          <div className="flex space-x-2">
             <input
               type="text"
               name="color"
-              placeholder="Vehicle Color"
+              placeholder="Color"
               value={formData.vehicle.color}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
+              className="w-1/2 bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
             />
-           
-            <label className="block text-sm font-medium text-gray-700 mt-2">Vehicle Plate</label>
             <input
               type="text"
               name="plate"
-              placeholder="Vehicle Plate"
+              placeholder="Plate Number"
               value={formData.vehicle.plate}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
+              className="w-1/2 bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
             />
-            
+          </div>
 
-            <label className="block text-sm font-medium text-gray-700 mt-2">Vehicle Type</label>
+          <div className="flex space-x-2">
+            <input
+              type="number"
+              name="capacity"
+              placeholder="Capacity"
+              value={formData.vehicle.capacity}
+              onChange={handleChange}
+              className="w-1/2 bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
+            />
             <select
               name="vehicleType"
               value={formData.vehicle.vehicleType}
               onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
+              className="w-1/2 bg-gray-100 px-4 py-2 rounded-md focus:ring focus:ring-gray-300"
             >
-              <option value="">Select Vehicle Type</option>
+              <option value="">Type</option>
               <option value="Car">Car</option>
               <option value="Auto">Auto</option>
               <option value="MotorCycle">Motorcycle</option>
             </select>
-           
-            <label className="block text-sm font-medium text-gray-700 mt-2">Vehicle Capacity</label>
-            <input
-              type="number"
-              name="capacity"
-              placeholder="Vehicle Capacity"
-              value={formData.vehicle.capacity}
-              onChange={handleChange}
-              className="w-full mt-1 px-4 py-2 border rounded focus:ring focus:ring-blue-300"
-            />
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="w-full bg-yellow-500 text-white py-2 rounded hover:bg-blue-600">
-            Sign Up
+          <button type="submit" className="w-full bg-yellow-500 text-black py-2 rounded-md hover:bg-gray-900">
+            Create Captain Account
           </button>
+
+          {/* Login Link */}
+          <p className="text-center text-gray-500 text-sm mt-2">
+            Already have an account? <a href="/captainLogin" className="text-blue-600">Login here</a>
+          </p>
+
+          {/* reCAPTCHA Notice */}
+          <p className="text-xs text-gray-400 text-center mt-4">
+            This site is protected by reCAPTCHA and the Google <a href="#" className="text-blue-600">Privacy Policy</a> and <a href="#" className="text-blue-600">Terms of Service</a> apply.
+          </p>
         </form>
       </div>
     </div>
