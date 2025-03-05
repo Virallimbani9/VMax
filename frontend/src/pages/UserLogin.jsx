@@ -1,17 +1,39 @@
 import React, { useState } from 'react';
+import { UserDataContext } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const UserLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userData, setUserData] = useState({});
+
+    const navigate = useNavigate();
+    const { user, setUser } = React.useContext(UserDataContext);
+  
+    if (!setUser) {
+      console.error(
+        "setUser is not defined. Ensure UserContext is wrapping the component."
+      );
+    }
+
+
     
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
-        setUserData({
+        const userData = {
             email: email,
             password: password
-        })
+        }
         // console.log(userData);
+
+        try{
+            const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userData);
+            setUser(res.data);
+            localStorage.setItem('token', res.data.token);
+            navigate('/home');
+        } catch (error) {
+            console.error(error.response.data.message);
+        }
         setEmail('');
         setPassword('');
     }
