@@ -26,11 +26,11 @@ const CaptainLogout = () => {
             })
             .then((response) => {
                 console.log("Logout successful:", response.data);
-                navigate("/capatinLogin");
+                navigate("/captainLogin");
             })
             .catch((error) => {
                 console.error("Logout error:", error);
-                navigate("/capatinLogin");
+                navigate("/captainLogin");
             });
     }, [navigate]);
 

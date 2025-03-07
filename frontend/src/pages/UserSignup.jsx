@@ -29,7 +29,7 @@ const UserSignup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("User Data:", formData);
+    // console.log("User Data:", formData);
     const formattedData = {
       fullName: {
         firstName: formData.firstName,
